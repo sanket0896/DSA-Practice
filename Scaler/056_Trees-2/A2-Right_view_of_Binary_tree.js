@@ -36,33 +36,26 @@ Output 2:
 //    }
 
 function solve(A) {
+    let q = [A, null];
     let ans = [];
-    let q = [];
-    q.push(A);
+    let addToAns = true;
 
-    while (q.length) {
-        let child = [];
-        let l = q.shift();
-        ans.push(l.data);
+    while (q.length > 1) {
+        let node = q.shift();
 
-        if(l.right){
-            child.push(l.right);
-        }
-        if(l.left){
-            child.push(l.left);
+        if(addToAns){
+            ans.push(node.data);
+            addToAns = false;
         }
 
-        while (q.length) {
-            l = q.shift();
-            if(l.right){
-                child.push(l.right);
-            }
-            if(l.left){
-                child.push(l.left);
-            }
+        if(node === null){
+            addToAns = true;
+            q.push(null);
+        }else{
+            !!node.right && q.push(node.right);
+            !!node.left && q.push(node.left);
         }
 
-        q = child;
     }
 
     return ans;

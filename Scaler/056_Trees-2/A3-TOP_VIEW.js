@@ -27,68 +27,68 @@ Output 2:
     [1, 2, 3]
  */
 
+// Definition for a  binary tree node
+function TreeNode(data){
+    this.data = data
+    this.left = null
+    this.right = null
+  }
+
+function Pair(node, dist) {
+   this.node = node;
+   this.dist = dist;
+}
+
 function solve(A) {
-    if(A === null){
-        return [];
-    }
-    let ans = [];
-    let map = new Map();
-    let s = [];
+   
+   if(A === null){
+       return [];
+   }
+   
+   let ans = [];
+   let map = new Map();
+   let minDist = Infinity;
+   let maxDist = -Infinity;
 
-    function Pair(node, level) {
-        this.node = node;
-        this.level = level;
-    }
-    s.push(new Pair(A,0));
-    if(!map.has(0)){
-        map.set(0, A.data);
-        ans.push(A.data);
-    }
+   let q = [new Pair(A, 0)];
 
-    while (s.length) {
-        let child = [];
+   while(q.length){
+       let {node, dist} = q.shift();
+       levelOrder(node, dist);
+       !!node.left && q.push(new Pair(node.left, dist-1));
+       !!node.right && q.push(new Pair(node.right, dist+1));
+   }
 
-        while (s.length) {
-            let {node, level} = s.shift();
-            
-            if(node.left){
-                child.push(new Pair(node.left, level-1))
-            }
-            if(node.right){
-                child.push(new Pair(node.right, level+1))
-            }
+   for(let i = minDist; i <= maxDist; ++i){
+       ans.push(map.get(i)[0]);
+   }
+
+   return ans;
+
+   function levelOrder(node, dist){
+
+        if(node === null){
+            return;
         }
 
+        if(map.has(dist)){
+            return;
+        }else{
+            map.set(dist, [node.data]);
+        }
 
-        if(child.length > 0){
-            let left = child[0];
-            if (left && !map.has(left.level)) {
-                map.set(left.level, left.node.data);
-                ans.push(left.node.data);
-            }
-        }
-    
-        if(child.length > 1){
-            let right = child[child.length-1];
-            if (right && !map.has(right.level)) {
-                map.set(right.level, right.node.data);
-                ans.push(right.node.data);
-            }
-        }
-        
-        s = child;
+        minDist = Math.min(minDist, dist);
+        maxDist = Math.max(maxDist, dist);
     }
-    
-    return ans;
 }
 
 // ----------------- Testing --------------------
 
 // Definition for a  binary tree node
 function TreeNode(data){
-    this.data = data
-    this.left = null
-    this.right = null
+   this.data = data
+   this.left = null
+   this.right = null
 }
 
 let curr = null;
@@ -134,4 +134,28 @@ curr = C.right;
 curr.left = new TreeNode(29);
 curr.right = new TreeNode(4);
 
-console.log(solve(C));
+
+for(let i = test.length - 1; i >= 0; --i){
+   if(test[i] === -1){
+       test[i] = null;
+   }else{
+       test[i] = new TreeNode(test[i]);
+       let l = 2 * i + 1;
+       let r = 2 * i + 2;
+
+       if(l < test.length){
+           test[i].left = test[l];
+       }
+
+       if(r < test.length){
+           test[i].right = test[r];
+       }
+   }
+}
+
+console.log(solve(test[0]).sort());
+
+// console.log("63 7722 9970 4002 7668 7935 1936 8299 9867 4806 5189 3778 8567 5263 189 8603 8477 6760 9299 9796 3139 1319 4025 6778 4701 9212 3082 2462 3251 1148 4323 7475 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1"
+// .split(' ').map(i => +i));
+
+test = []
